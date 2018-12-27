@@ -26,30 +26,29 @@ unsafe impl UnsafeAnyExt for DebugAny + Send + Sync {}
 /// additional bounds.
 ///
 /// There is also an exported alias for this type of `TypeMap`, `CloneAny`.
-pub trait CloneAny: Any {
+pub trait CloneAny: Any + Send + Sync {
     #[doc(hidden)]
     fn clone_any(&self) -> Box<CloneAny>;
     #[doc(hidden)]
-    fn clone_any_send(&self) -> Box<CloneAny + Send> where Self: Send;
+    fn clone_any_send(&self) -> Box<CloneAny + Send>;
     #[doc(hidden)]
-    fn clone_any_sync(&self) -> Box<CloneAny + Sync> where Self: Sync;
+    fn clone_any_sync(&self) -> Box<CloneAny + Sync>;
     #[doc(hidden)]
-    fn clone_any_send_sync(&self) -> Box<CloneAny + Send + Sync> where Self: Send + Sync;
+    fn clone_any_send_sync(&self) -> Box<CloneAny + Send + Sync>;
 }
 
-impl<T: Any + Clone> CloneAny for T {
+impl<T: Any + Clone + Send + Sync> CloneAny for T {
     fn clone_any(&self) -> Box<CloneAny> { Box::new(self.clone()) }
 
-    fn clone_any_send(&self) -> Box<CloneAny + Send> where Self: Send {
+    fn clone_any_send(&self) -> Box<CloneAny + Send> {
         Box::new(self.clone())
     }
 
-    fn clone_any_sync(&self) -> Box<CloneAny + Sync> where Self: Sync {
+    fn clone_any_sync(&self) -> Box<CloneAny + Sync> {
         Box::new(self.clone())
     }
 
-    fn clone_any_send_sync(&self) -> Box<CloneAny + Send + Sync>
-    where Self: Send + Sync {
+    fn clone_any_send_sync(&self) -> Box<CloneAny + Send + Sync> {
         Box::new(self.clone())
     }
 }
